@@ -17,12 +17,12 @@ func main() {
 
 	studentApi := app.Group("/student")
 	{
-		studentApi.Post("", handlers.CreateStudent)                // Create a new student
-		studentApi.Get("", handlers.GetAllStudent)                 // Get all students
-		studentApi.Get("/:id", handlers.GetStudentById)            // Get a student by ID
-		studentApi.Put("/:id", handlers.UpdateStudent)             // Update a student by ID
-		studentApi.Delete("/:id", handlers.DeleteStudent)          // Delete a student by ID
-		studentApi.Delete("/:id", handlers.GenerateStudentSummary) // Generate a summary for a student
+		studentApi.Post("", handlers.CreateStudent)                     // Create a new student
+		studentApi.Get("", handlers.GetAllStudent)                      // Get all students
+		studentApi.Get("/:id", handlers.GetStudentById)                 // Get a student by ID
+		studentApi.Put("/:id", handlers.UpdateStudent)                  // Update a student by ID
+		studentApi.Delete("/:id", handlers.DeleteStudent)               // Delete a student by ID
+		studentApi.Get("/:id/summary", handlers.GenerateStudentSummary) // Generate a summary for a student
 	}
 
 	// Handle Incorrect route

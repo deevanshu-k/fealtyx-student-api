@@ -5,6 +5,7 @@ import (
 
 	"github.com/deevanshu-k/fealtyx-student-api/src/db"
 	"github.com/deevanshu-k/fealtyx-student-api/src/structs"
+	"github.com/deevanshu-k/fealtyx-student-api/src/summarizer"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -163,5 +164,29 @@ func DeleteStudent(c *fiber.Ctx) error {
 }
 
 func GenerateStudentSummary(c *fiber.Ctx) error {
-	return c.SendString("Generate Student Summary")
+	id := c.Params("id")
+
+	student, err := db.GetStudent(id)
+	if err != nil {
+		if err.Error() == "STUDENT_NOT_FOUND" {
+			return c.Status(http.StatusNotFound).JSON(fiber.Map{
+				"message": "Student not found",
+			})
+		}
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to generate student summary",
+		})
+	}
+
+	summary, err := summarizer.SummarizeStudent(student)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to generate student summary",
+		})
+	}
+
+	return c.Status(http.StatusAccepted).JSON(fiber.Map{
+		"message": "Student summary generated successfully",
+		"data":    summary,
+	})
 }
