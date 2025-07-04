@@ -6,6 +6,7 @@ import (
 	"github.com/deevanshu-k/fealtyx-student-api/src/db"
 	"github.com/deevanshu-k/fealtyx-student-api/src/structs"
 	"github.com/deevanshu-k/fealtyx-student-api/src/summarizer"
+	"github.com/deevanshu-k/fealtyx-student-api/src/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -22,7 +23,7 @@ func CreateStudent(c *fiber.Ctx) error {
 		})
 	}
 
-	if student.Name == "" || student.Age == 0 || student.Email == "" {
+	if student.Name == "" || student.Age == 0 || student.Email == "" || !utils.IsValidEmail(student.Email) {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
 		})
@@ -104,6 +105,12 @@ func UpdateStudent(c *fiber.Ctx) error {
 	if student.Name == "" && student.Age == 0 && student.Email == "" {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"message": "No fields to update",
+		})
+	}
+
+	if student.Email != "" && !utils.IsValidEmail(student.Email) {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid email address",
 		})
 	}
 
