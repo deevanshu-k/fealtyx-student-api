@@ -3,14 +3,17 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/deevanshu-k/fealtyx-student-api/src/config"
 	"github.com/deevanshu-k/fealtyx-student-api/src/handlers"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func main() {
 	app := fiber.New()
+	app.Use(logger.New())
 
 	studentApi := app.Group("/student")
 	{
@@ -24,8 +27,8 @@ func main() {
 
 	// Handle Incorrect route
 	app.All("*", func(c *fiber.Ctx) error {
-		return c.Status(500).JSON(fiber.Map{
-			"error": "Not found!",
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"error": "404, Not found!",
 		})
 	})
 

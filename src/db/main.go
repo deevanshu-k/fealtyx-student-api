@@ -16,7 +16,7 @@ func init() {
 }
 
 func GetAllStudents() ([]structs.Student, error) {
-	var students []structs.Student
+	var students = make([]structs.Student, 0)
 	for _, student := range db.students {
 		students = append(students, student)
 	}
@@ -27,34 +27,34 @@ func GetStudent(id string) (structs.Student, error) {
 	if student, ok := db.students[id]; ok {
 		return student, nil
 	}
-	return structs.Student{}, errors.New("student not found")
+	return structs.Student{}, errors.New("STUDENT_NOT_FOUND")
 }
 
-func CreateStudent(student structs.Student) error {
+func CreateStudent(student structs.Student) (structs.Student, error) {
 	nanoId, err := utils.GenerateNanoId(10)
 	if err != nil {
-		return err
+		return structs.Student{}, err
 	}
 	student.ID = nanoId
 
 	if _, ok := db.students[student.ID]; ok {
-		return errors.New("student already exists")
+		return structs.Student{}, errors.New("STUDENT_ALREADY_EXISTS")
 	}
 	db.students[student.ID] = student
-	return nil
+	return student, nil
 }
 
-func UpdateStudent(id string, student structs.Student) error {
-	if _, ok := db.students[id]; !ok {
-		return errors.New("student not found")
+func UpdateStudent(student structs.Student) (structs.Student, error) {
+	if _, ok := db.students[student.ID]; !ok {
+		return structs.Student{}, errors.New("STUDENT_NOT_FOUND")
 	}
-	db.students[id] = student
-	return nil
+	db.students[student.ID] = student
+	return student, nil
 }
 
 func DeleteStudent(id string) error {
 	if _, ok := db.students[id]; !ok {
-		return errors.New("student not found")
+		return errors.New("STUDENT_NOT_FOUND")
 	}
 	delete(db.students, id)
 	return nil
